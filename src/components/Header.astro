@@ -1,0 +1,28 @@
+---
+// src/components/Header.astro
+---
+
+<header class="bg-blue-600 text-white p-4">
+    <nav class="container mx-auto flex justify-between items-center">
+      <div class="text-2xl font-bold">E-Learning Platform</div>
+      <ul class="flex space-x-4">
+        <li>
+          <a href="#" class="header-link" data-section="courses">Courses</a>
+        </li>
+        <li>
+          <a href="#" class="header-link" data-section="daily-quests">Daily Quests</a>
+        </li>
+      </ul>
+    </nav>
+  </header>
+  
+  <script>
+    const headerLinks = document.querySelectorAll('.header-link');
+    headerLinks.forEach(link => {
+      link.addEventListener('click', (e) => {
+        e.preventDefault();
+        const section = e.target.getAttribute('data-section');
+        document.dispatchEvent(new CustomEvent('sectionChange', { detail: section }));
+      });
+    });
+  </script>

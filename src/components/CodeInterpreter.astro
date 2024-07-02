@@ -1,0 +1,30 @@
+---
+// src/components/CodeInterpreter.astro
+
+// If you need any imports or TypeScript logic, put it here
+// For example:
+// import type { Something } from '../types';
+
+// You can declare any variables or functions here if needed
+const exampleCode = `
+// Example swell-js code
+import swell from 'swell-js';
+
+swell.init('your-store-id', 'your-public-key');
+
+async function fetchProducts() {
+  const products = await swell.products.list({
+    limit: 25,
+    page: 1
+  });
+  return products;
+}
+`;
+---
+
+<aside class="w-1/4 bg-gray-800 text-white p-4">
+  <h2 class="text-lg font-semibold mb-4">Code Interpreter</h2>
+  <div class="bg-gray-900 p-4 rounded-md">
+    <pre><code class="language-javascript">{exampleCode}</code></pre>
+  </div>
+</aside>

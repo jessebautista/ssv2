@@ -1,0 +1,39 @@
+---
+import { supabase } from '../../lib/supabase';
+import MainLayout from '../../layouts/MainLayout.astro';
+
+const { slug } = Astro.params;
+
+let course = null;
+let error = null;
+
+try {
+  const { data, error: fetchError } = await supabase
+    .from('courses')
+    .select('*')
+    .eq('slug', slug)
+    .single();
+
+  if (fetchError) throw fetchError;
+  course = data;
+} catch (e) {
+  error = e;
+  console.error('Error fetching course:', e);
+}
+---
+
+<MainLayout title={course ? course.title : 'Course Not Found'}>
+  {course ? (
+    <div class="max-w-3xl mx-auto py-8">
+      <h1 class="text-3xl font-bold mb-4">{course.title}</h1>
+      <div class="prose max-w-none">
+        {course.content}
+      </div>
+    </div>
+  ) : (
+    <div class="max-w-3xl mx-auto py-8">
+      <h1 class="text-3xl font-bold mb-4">Course Not Found</h1>
+      <p>Sorry, the requested course could not be found.</p>
+    </div>
+  )}
+</MainLayout>

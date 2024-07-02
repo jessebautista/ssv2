@@ -1,0 +1,28 @@
+---
+import Header from '../components/Header.astro';
+import Sidebar from '../components/Sidebar.astro';
+import CodeInterpreter from '../components/CodeInterpreter.astro';
+
+const { title } = Astro.props;
+---
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+  </head>
+  <body>
+    <Header />
+    <div class="flex min-h-screen">
+      <Sidebar />
+      <main class="flex-1 p-8">
+        <div id="course-content">
+          <h1 class="text-3xl font-bold mb-4">Welcome to Our E-Learning Platform</h1>
+          <p>Select a course or daily quest from the sidebar to start learning!</p>
+        </div>
+      </main>
+      <CodeInterpreter />
+    </div>
+  </body>
+</html>

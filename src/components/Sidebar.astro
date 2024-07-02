@@ -1,0 +1,132 @@
+---
+// src/components/Sidebar.astro
+import { supabase } from '../lib/supabase';
+
+let courses = [];
+let dailyQuests = [];
+let error = null;
+
+try {
+  const [coursesResponse, questsResponse] = await Promise.all([
+    supabase.from('courses').select('*').order('order'),
+    supabase.from('daily_quests').select('*').order('order')
+  ]);
+
+  if (coursesResponse.error) throw coursesResponse.error;
+  if (questsResponse.error) throw questsResponse.error;
+
+  courses = coursesResponse.data || [];
+  dailyQuests = questsResponse.data || [];
+} catch (e) {
+  error = e;
+  console.error('Error fetching data:', e);
+}
+---
+
+<aside class="w-64 bg-white border-r border-gray-200">
+  <div class="p-4">
+    <h2 class="text-lg font-semibold" id="sidebar-title">Course Content</h2>
+    <nav class="mt-4">
+      <ul class="space-y-2" id="sidebar-list">
+        {courses.map((course) => (
+          <li>
+            
+              href="#"
+              data-slug={course.slug}
+              data-type="course"
+              class="content-link block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-md"
+            >
+              {course.title}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </nav>
+  </div>
+</aside>
+
+<script>
+  import { createClient } from '@supabase/supabase-js';
+
+  const supabase = createClient(
+    'https://oazeymuyzghnlmgbfvnc.supabase.co',
+    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9hemV5bXV5emdobmxtZ2Jmdm5jIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MTk4NDI4ODksImV4cCI6MjAzNTQxODg4OX0.50Av9W7k6GG6dEiyf9TKupwtE92mBEoCBH7Ps8Sw4rU'
+  );
+
+  let courses = [];
+  let dailyQuests = [];
+
+  async function fetchData() {
+    const [coursesResponse, questsResponse] = await Promise.all([
+      supabase.from('courses').select('*').order('order'),
+      supabase.from('daily_quests').select('*').order('order')
+    ]);
+
+    courses = coursesResponse.data || [];
+    dailyQuests = questsResponse.data || [];
+  }
+
+  function updateSidebar(section) {
+    const sidebarTitle = document.getElementById('sidebar-title');
+    const sidebarList = document.getElementById('sidebar-list');
+    const items = section === 'courses' ? courses : dailyQuests;
+    const title = section === 'courses' ? 'Course Content' : 'Daily Quests';
+
+    sidebarTitle.textContent = title;
+    sidebarList.innerHTML = items.map(item => `
+      <li>
+        <a
+          href="#"
+          data-slug="${item.slug}"
+          data-type="${section === 'courses' ? 'course' : 'quest'}"
+          class="content-link block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-md"
+        >
+          ${item.title}
+        </a>
+      </li>
+    `).join('');
+
+    attachContentLinkListeners();
+  }
+
+  function attachContentLinkListeners() {
+    const contentLinks = document.querySelectorAll('.content-link');
+    contentLinks.forEach(link => {
+      link.addEventListener('click', async (e) => {
+        e.preventDefault();
+        const slug = e.target.getAttribute('data-slug');
+        const type = e.target.getAttribute('data-type');
+        const table = type === 'course' ? 'courses' : 'daily_quests';
+
+        try {
+          const { data, error } = await supabase
+            .from(table)
+            .select('*')
+            .eq('slug', slug)
+            .single();
+
+          if (error) throw error;
+
+          const contentArea = document.getElementById('course-content');
+          if (contentArea && data) {
+            contentArea.innerHTML = `
+              <h1 class="text-3xl font-bold mb-4">${data.title}</h1>
+              <div class="prose max-w-none">${data.content}</div>
+            `;
+          }
+        } catch (error) {
+          console.error('Error fetching content:', error);
+        }
+      });
+    });
+  }
+
+  document.addEventListener('DOMContentLoaded', async () => {
+    await fetchData();
+    updateSidebar('courses');
+  });
+
+  document.addEventListener('sectionChange', (e) => {
+    updateSidebar(e.detail);
+  });
+</script>
