@@ -1,30 +1,72 @@
 ---
 // src/components/CodeInterpreter.astro
-
-// If you need any imports or TypeScript logic, put it here
-// For example:
-// import type { Something } from '../types';
-
-// You can declare any variables or functions here if needed
-const exampleCode = `
-// Example swell-js code
+import { useState } from 'preact/hooks';
 import swell from 'swell-js';
 
-swell.init('your-store-id', 'your-public-key');
+// Initialize swell with placeholder values
+swell.init('placeholder-store-id', 'placeholder-public-key');
 
-async function fetchProducts() {
-  const products = await swell.products.list({
-    limit: 25,
-    page: 1
-  });
-  return products;
-}
-`;
+const CodeInterpreter = () => {
+  const [storeId, setStoreId] = useState('');
+  const [publicKey, setPublicKey] = useState('');
+  const [result, setResult] = useState('');
+
+  const initializeSwell = () => {
+    swell.init(storeId, publicKey);
+    setResult('Swell initialized successfully');
+  };
+
+  const fetchProducts = async () => {
+    try {
+      const products = await swell.products.list({
+        limit: 25,
+        page: 1
+      });
+      setResult(JSON.stringify(products, null, 2));
+    } catch (error) {
+      setResult(`Error: ${error.message}`);
+    }
+  };
+
+  return (
+    <aside class="w-1/4 bg-gray-800 text-white p-4">
+      <h2 class="text-lg font-semibold mb-4">Code Interpreter</h2>
+      <div class="mb-4">
+        <input
+          type="text"
+          placeholder="Store ID"
+          value={storeId}
+          onChange={(e) => setStoreId(e.target.value)}
+          class="w-full p-2 mb-2 text-black"
+        />
+        <input
+          type="text"
+          placeholder="Public Key"
+          value={publicKey}
+          onChange={(e) => setPublicKey(e.target.value)}
+          class="w-full p-2 mb-2 text-black"
+        />
+        <button
+          onClick={initializeSwell}
+          class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+        >
+          Initialize Swell
+        </button>
+      </div>
+      <div class="mb-4">
+        <button
+          onClick={fetchProducts}
+          class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
+        >
+          Fetch Products
+        </button>
+      </div>
+      <div class="bg-gray-900 p-4 rounded-md">
+        <pre><code class="language-json">{result}</code></pre>
+      </div>
+    </aside>
+  );
+};
 ---
 
-<aside class="w-1/4 bg-gray-800 text-white p-4">
-  <h2 class="text-lg font-semibold mb-4">Code Interpreter</h2>
-  <div class="bg-gray-900 p-4 rounded-md">
-    <pre><code class="language-javascript">{exampleCode}</code></pre>
-  </div>
-</aside>
+<CodeInterpreter client:load />
