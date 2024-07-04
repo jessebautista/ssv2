@@ -25,11 +25,17 @@
     </button>
   </div>
   <div class="mb-4">
+    <textarea
+      id="queryInput"
+      rows="4"
+      placeholder="Enter your Swell.js query here (e.g., swell.products.list({limit: 25, page: 1}))"
+      class="w-full p-2 mb-2 text-black"
+    ></textarea>
     <button
-      id="fetchProductsBtn"
+      id="runQueryBtn"
       class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
     >
-      Fetch Products
+      Run Query
     </button>
   </div>
   <div class="bg-gray-900 p-4 rounded-md">
@@ -46,7 +52,8 @@
   const storeIdInput = document.getElementById('storeId');
   const publicKeyInput = document.getElementById('publicKey');
   const initializeSwellBtn = document.getElementById('initializeSwellBtn');
-  const fetchProductsBtn = document.getElementById('fetchProductsBtn');
+  const queryInput = document.getElementById('queryInput');
+  const runQueryBtn = document.getElementById('runQueryBtn');
   const resultElement = document.getElementById('result');
 
   initializeSwellBtn.addEventListener('click', () => {
@@ -56,13 +63,13 @@
     resultElement.textContent = 'Swell initialized successfully';
   });
 
-  fetchProductsBtn.addEventListener('click', async () => {
+  runQueryBtn.addEventListener('click', async () => {
     try {
-      const products = await swell.products.list({
-        limit: 25,
-        page: 1
-      });
-      resultElement.textContent = JSON.stringify(products, null, 2);
+      const query = queryInput.value;
+      // Use Function constructor to create a function from the input string
+      const queryFunction = new Function('swell', `return ${query}`);
+      const result = await queryFunction(swell);
+      resultElement.textContent = JSON.stringify(result, null, 2);
     } catch (error) {
       resultElement.textContent = `Error: ${error.message}`;
     }
