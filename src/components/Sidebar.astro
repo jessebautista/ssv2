@@ -31,9 +31,10 @@ try {
       aria-expanded="true"
       aria-controls="sidebar-content"
     >
-      <span id="sidebar-title">Course Content</span>
-      <svg class="w-5 h-5 transition-transform duration-200" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-        <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+      <span id="sidebar-title" class="sr-only">Course Content</span>
+      <svg class="w-5 h-5 transition-transform duration-200" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg" id="sidebar-icon">
+        <path fill-rule="evenodd" d="M15.707 15.707a1 1 0 01-1.414 0l-5-5a1 1 0 010-1.414l5-5a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd"></path>
+        <path fill-rule="evenodd" d="M4.293 15.707a1 1 0 001.414 0l5-5a1 1 0 000-1.414l-5-5a1 1 0 00-1.414 1.414L8.586 10l-4.293 4.293a1 1 0 000 1.414z" clip-rule="evenodd"></path>
       </svg>
     </button>
     <nav class="mt-4 overflow-hidden transition-all duration-300" id="sidebar-content">
@@ -77,12 +78,9 @@ try {
   }
 
   function updateSidebar(section) {
-    const sidebarTitle = document.getElementById('sidebar-title');
     const sidebarList = document.getElementById('sidebar-list');
     const items = section === 'courses' ? courses : dailyQuests;
-    const title = section === 'courses' ? 'Course Content' : 'Daily Quests';
 
-    sidebarTitle.textContent = title;
     sidebarList.innerHTML = items.map(item => `
       <li>
         <a
@@ -138,7 +136,7 @@ try {
     const sidebarToggle = document.getElementById('sidebar-toggle');
     const sidebar = document.getElementById('sidebar');
     const sidebarContent = document.getElementById('sidebar-content');
-    const chevron = sidebarToggle.querySelector('svg');
+    const sidebarIcon = document.getElementById('sidebar-icon');
 
     sidebarToggle.addEventListener('click', () => {
       const isExpanded = sidebarToggle.getAttribute('aria-expanded') === 'true';
@@ -146,7 +144,18 @@ try {
       sidebar.classList.toggle('w-64', isExpanded);
       sidebar.classList.toggle('w-16', !isExpanded);
       sidebarContent.classList.toggle('h-0', !isExpanded);
-      chevron.classList.toggle('rotate-180', !isExpanded);
+      
+      if (isExpanded) {
+        sidebarIcon.innerHTML = `
+          <path fill-rule="evenodd" d="M4.293 15.707a1 1 0 001.414 0l5-5a1 1 0 000-1.414l-5-5a1 1 0 00-1.414 1.414L8.586 10l-4.293 4.293a1 1 0 000 1.414z" clip-rule="evenodd"></path>
+          <path fill-rule="evenodd" d="M4.293 15.707a1 1 0 001.414 0l5-5a1 1 0 000-1.414l-5-5a1 1 0 00-1.414 1.414L8.586 10l-4.293 4.293a1 1 0 000 1.414z" clip-rule="evenodd"></path>
+        `;
+      } else {
+        sidebarIcon.innerHTML = `
+          <path fill-rule="evenodd" d="M15.707 15.707a1 1 0 01-1.414 0l-5-5a1 1 0 010-1.414l5-5a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd"></path>
+          <path fill-rule="evenodd" d="M4.293 15.707a1 1 0 001.414 0l5-5a1 1 0 000-1.414l-5-5a1 1 0 00-1.414 1.414L8.586 10l-4.293 4.293a1 1 0 000 1.414z" clip-rule="evenodd"></path>
+        `;
+      }
     });
   });
 
