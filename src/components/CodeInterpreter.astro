@@ -1,6 +1,7 @@
 ---
 // src/components/CodeInterpreter.astro
 import { useState } from 'preact/hooks';
+import { JSX } from 'preact';
 import swell from 'swell-js';
 
 // Initialize swell with placeholder values
@@ -29,40 +30,40 @@ const CodeInterpreterComponent = () => {
   };
 
   return (
-    <aside className="w-1/4 bg-gray-800 text-white p-4">
-      <h2 className="text-lg font-semibold mb-4">Code Interpreter</h2>
-      <div className="mb-4">
+    <aside class="w-1/4 bg-gray-800 text-white p-4">
+      <h2 class="text-lg font-semibold mb-4">Code Interpreter</h2>
+      <div class="mb-4">
         <input
           type="text"
           placeholder="Store ID"
           value={storeId}
-          onChange={(e) => setStoreId(e.target.value)}
-          className="w-full p-2 mb-2 text-black"
+          onChange={(e: JSX.TargetedEvent<HTMLInputElement>) => setStoreId(e.currentTarget.value)}
+          class="w-full p-2 mb-2 text-black"
         />
         <input
           type="text"
           placeholder="Public Key"
           value={publicKey}
-          onChange={(e) => setPublicKey(e.target.value)}
-          className="w-full p-2 mb-2 text-black"
+          onChange={(e: JSX.TargetedEvent<HTMLInputElement>) => setPublicKey(e.currentTarget.value)}
+          class="w-full p-2 mb-2 text-black"
         />
         <button
           onClick={initializeSwell}
-          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+          class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
         >
           Initialize Swell
         </button>
       </div>
-      <div className="mb-4">
+      <div class="mb-4">
         <button
           onClick={fetchProducts}
-          className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
+          class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
         >
           Fetch Products
         </button>
       </div>
-      <div className="bg-gray-900 p-4 rounded-md">
-        <pre><code className="language-json">{result}</code></pre>
+      <div class="bg-gray-900 p-4 rounded-md">
+        <pre><code class="language-json">{result}</code></pre>
       </div>
     </aside>
   );
