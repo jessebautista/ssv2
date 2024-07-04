@@ -1,73 +1,70 @@
 ---
 // src/components/CodeInterpreter.astro
-import { useState } from 'preact/hooks';
-import { JSX } from 'preact';
-import swell from 'swell-js';
+---
 
-// Initialize swell with placeholder values
-swell.init('placeholder-store-id', 'placeholder-public-key');
+<aside class="w-1/4 bg-gray-800 text-white p-4">
+  <h2 class="text-lg font-semibold mb-4">Code Interpreter</h2>
+  <div class="mb-4">
+    <input
+      type="text"
+      id="storeId"
+      placeholder="Store ID"
+      class="w-full p-2 mb-2 text-black"
+    />
+    <input
+      type="text"
+      id="publicKey"
+      placeholder="Public Key"
+      class="w-full p-2 mb-2 text-black"
+    />
+    <button
+      id="initializeSwellBtn"
+      class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+    >
+      Initialize Swell
+    </button>
+  </div>
+  <div class="mb-4">
+    <button
+      id="fetchProductsBtn"
+      class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
+    >
+      Fetch Products
+    </button>
+  </div>
+  <div class="bg-gray-900 p-4 rounded-md">
+    <pre><code id="result" class="language-json"></code></pre>
+  </div>
+</aside>
 
-const CodeInterpreterComponent = () => {
-  const [storeId, setStoreId] = useState('');
-  const [publicKey, setPublicKey] = useState('');
-  const [result, setResult] = useState('');
+<script>
+  import swell from 'swell-js';
 
-  const initializeSwell = () => {
+  // Initialize swell with placeholder values
+  swell.init('placeholder-store-id', 'placeholder-public-key');
+
+  const storeIdInput = document.getElementById('storeId');
+  const publicKeyInput = document.getElementById('publicKey');
+  const initializeSwellBtn = document.getElementById('initializeSwellBtn');
+  const fetchProductsBtn = document.getElementById('fetchProductsBtn');
+  const resultElement = document.getElementById('result');
+
+  initializeSwellBtn.addEventListener('click', () => {
+    const storeId = storeIdInput.value;
+    const publicKey = publicKeyInput.value;
     swell.init(storeId, publicKey);
-    setResult('Swell initialized successfully');
-  };
+    resultElement.textContent = 'Swell initialized successfully';
+  });
 
-  const fetchProducts = async () => {
+  fetchProductsBtn.addEventListener('click', async () => {
     try {
       const products = await swell.products.list({
         limit: 25,
         page: 1
       });
-      setResult(JSON.stringify(products, null, 2));
+      resultElement.textContent = JSON.stringify(products, null, 2);
     } catch (error) {
-      setResult(`Error: ${error.message}`);
+      resultElement.textContent = `Error: ${error.message}`;
     }
-  };
-
-  return (
-    <aside class="w-1/4 bg-gray-800 text-white p-4">
-      <h2 class="text-lg font-semibold mb-4">Code Interpreter</h2>
-      <div class="mb-4">
-        <input
-          type="text"
-          placeholder="Store ID"
-          value={storeId}
-          onChange={(e: JSX.TargetedEvent<HTMLInputElement>) => setStoreId(e.currentTarget.value)}
-          class="w-full p-2 mb-2 text-black"
-        />
-        <input
-          type="text"
-          placeholder="Public Key"
-          value={publicKey}
-          onChange={(e: JSX.TargetedEvent<HTMLInputElement>) => setPublicKey(e.currentTarget.value)}
-          class="w-full p-2 mb-2 text-black"
-        />
-        <button
-          onClick={initializeSwell}
-          class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-        >
-          Initialize Swell
-        </button>
-      </div>
-      <div class="mb-4">
-        <button
-          onClick={fetchProducts}
-          class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
-        >
-          Fetch Products
-        </button>
-      </div>
-      <div class="bg-gray-900 p-4 rounded-md">
-        <pre><code class="language-json">{result}</code></pre>
-      </div>
-    </aside>
-  );
-};
----
-
-<CodeInterpreterComponent client:load />
+  });
+</script>
