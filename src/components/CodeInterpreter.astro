@@ -2,25 +2,25 @@
 // src/components/CodeInterpreter.astro
 ---
 
-<div class="code-interpreter-section">
-  <h2 class="text-xl font-semibold mb-4 text-gray-800 dark:text-gray-200">Code Interpreter</h2>
-  <div class="pb-4 dark:text-gray-200">
+<div class="code-interpreter-section p-6">
+  <h2 class="text-xl font-semibold mb-4 text-gray-200">Code Interpreter</h2>
+  <div class="pb-4 text-gray-200">
     <div class="mb-4">
       <input
         type="text"
         id="storeId"
         placeholder="Store ID"
-        class="py-3 px-4 block w-full border-gray-200 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-slate-900 dark:border-gray-700 dark:text-gray-400"
+        class="py-3 px-4 block w-full border-gray-700 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 bg-gray-700 text-gray-200"
       />
       <input
         type="text"
         id="publicKey"
         placeholder="Public Key"
-        class="mt-2 py-3 px-4 block w-full border-gray-200 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-slate-900 dark:border-gray-700 dark:text-gray-400"
+        class="mt-2 py-3 px-4 block w-full border-gray-700 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 bg-gray-700 text-gray-200"
       />
       <button
         id="initializeSwellBtn"
-        class="mt-2 py-3 px-4 inline-flex justify-center items-center gap-2 rounded-md border border-transparent font-semibold bg-blue-500 text-white hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all text-sm dark:focus:ring-offset-gray-800"
+        class="mt-2 py-3 px-4 inline-flex justify-center items-center gap-2 rounded-md border border-transparent font-semibold bg-blue-600 text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all text-sm dark:focus:ring-offset-gray-800"
       >
         Initialize Swell
       </button>
@@ -30,17 +30,17 @@
         id="queryInput"
         rows="4"
         placeholder="Enter your Swell.js query here (e.g., swell.products.list({limit: 25, page: 1}))"
-        class="py-3 px-4 block w-full border-gray-200 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-slate-900 dark:border-gray-700 dark:text-gray-400"
+        class="py-3 px-4 block w-full border-gray-700 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 bg-gray-700 text-gray-200"
       ></textarea>
       <button
         id="runQueryBtn"
-        class="mt-2 py-3 px-4 inline-flex justify-center items-center gap-2 rounded-md border border-transparent font-semibold bg-green-500 text-white hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition-all text-sm dark:focus:ring-offset-gray-800"
+        class="mt-2 py-3 px-4 inline-flex justify-center items-center gap-2 rounded-md border border-transparent font-semibold bg-green-600 text-white hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition-all text-sm dark:focus:ring-offset-gray-800"
       >
         Run Query
       </button>
     </div>
-    <div class="bg-gray-100 dark:bg-gray-800 p-4 rounded-md">
-      <pre><code id="result" class="language-json block whitespace-pre-wrap"></code></pre>
+    <div class="bg-gray-700 p-4 rounded-md">
+      <pre><code id="result" class="language-json block whitespace-pre-wrap text-gray-200"></code></pre>
     </div>
   </div>
 </div>
