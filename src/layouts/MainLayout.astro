@@ -11,6 +11,18 @@ const { title } = Astro.props;
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{title}</title>
+    <style>
+      .resizer {
+        width: 10px;
+        height: 100%;
+        background-color: #f0f0f0;
+        cursor: col-resize;
+        transition: background-color 0.3s;
+      }
+      .resizer:hover {
+        background-color: #d0d0d0;
+      }
+    </style>
   </head>
   <body>
     <Header />
@@ -22,7 +34,39 @@ const { title } = Astro.props;
           <p>Select a course or daily quest from the sidebar to start learning!</p>
         </div>
       </main>
-      <CodeInterpreter />
+      <div id="resizer" class="resizer"></div>
+      <div id="code-interpreter-container" style="width: 300px; min-width: 200px; max-width: 50%;">
+        <CodeInterpreter />
+      </div>
     </div>
+
+    <script>
+      const resizer = document.getElementById('resizer');
+      const codeInterpreterContainer = document.getElementById('code-interpreter-container');
+
+      let isResizing = false;
+      let lastDownX = 0;
+
+      resizer.addEventListener('mousedown', (e) => {
+        isResizing = true;
+        lastDownX = e.clientX;
+      });
+
+      document.addEventListener('mousemove', (e) => {
+        if (!isResizing) return;
+
+        const offsetRight = document.body.offsetWidth - (e.clientX - document.body.offsetLeft);
+        const minWidth = 200;
+        const maxWidth = document.body.offsetWidth * 0.5;
+
+        if (offsetRight > minWidth && offsetRight < maxWidth) {
+          codeInterpreterContainer.style.width = `${offsetRight}px`;
+        }
+      });
+
+      document.addEventListener('mouseup', () => {
+        isResizing = false;
+      });
+    </script>
   </body>
 </html>
