@@ -6,26 +6,6 @@
   <h2 class="text-xl font-semibold mb-4 text-gray-200">Code Interpreter</h2>
   <div class="pb-4 text-gray-200">
     <div class="mb-4">
-      <input
-        type="text"
-        id="storeId"
-        placeholder="Store ID"
-        class="py-3 px-4 block w-full border-gray-700 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 bg-gray-700 text-gray-200"
-      />
-      <input
-        type="text"
-        id="publicKey"
-        placeholder="Public Key"
-        class="mt-2 py-3 px-4 block w-full border-gray-700 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 bg-gray-700 text-gray-200"
-      />
-      <button
-        id="initializeSwellBtn"
-        class="mt-2 py-3 px-4 inline-flex justify-center items-center gap-2 rounded-md border border-transparent font-semibold bg-blue-600 text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all text-sm dark:focus:ring-offset-gray-800"
-      >
-        Initialize Swell
-      </button>
-    </div>
-    <div class="mb-4">
       <textarea
         id="queryInput"
         rows="4"
@@ -48,24 +28,26 @@
 <script>
   import swell from 'swell-js';
 
-  // Initialize swell with placeholder values
-  swell.init('placeholder-store-id', 'placeholder-public-key');
+  let storeId = '';
+  let publicKey = '';
 
-  const storeIdInput = document.getElementById('storeId');
-  const publicKeyInput = document.getElementById('publicKey');
-  const initializeSwellBtn = document.getElementById('initializeSwellBtn');
   const queryInput = document.getElementById('queryInput');
   const runQueryBtn = document.getElementById('runQueryBtn');
   const resultElement = document.getElementById('result');
 
-  initializeSwellBtn.addEventListener('click', () => {
-    const storeId = storeIdInput.value;
-    const publicKey = publicKeyInput.value;
+  document.addEventListener('saveSettings', (e) => {
+    storeId = e.detail.storeId;
+    publicKey = e.detail.publicKey;
     swell.init(storeId, publicKey);
     resultElement.textContent = 'Swell initialized successfully';
   });
 
   runQueryBtn.addEventListener('click', async () => {
+    if (!storeId || !publicKey) {
+      resultElement.textContent = 'Please set Store ID and Public Key in the settings first.';
+      return;
+    }
+
     try {
       const query = queryInput.value;
       // Use Function constructor to create a function from the input string
