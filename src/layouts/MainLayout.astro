@@ -120,6 +120,7 @@ const { title } = Astro.props;
       const closeSettingsBtn = document.getElementById('closeSettingsBtn');
       const storeIdInput = document.getElementById('storeId');
       const publicKeyInput = document.getElementById('publicKey');
+      const courseContent = document.getElementById('course-content');
 
       let isResizing = false;
       let lastDownX = 0;
@@ -171,6 +172,46 @@ const { title } = Astro.props;
           settingsModal.style.display = 'none';
         }
       });
+
+      // Listen for sectionChange event
+      document.addEventListener('sectionChange', (e) => {
+        if (e.detail === 'courses') {
+          resetMainContent();
+        }
+      });
+
+      function resetMainContent() {
+        courseContent.innerHTML = `
+          <h1 class="text-3xl font-bold mb-6 text-gray-800">Welcome to Swell Surge</h1>
+          <p class="text-lg text-gray-600 mb-8">Select a course or daily quest from the sidebar to start your learning journey!</p>
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div class="bg-white p-6 rounded-lg shadow-md">
+              <h2 class="text-xl font-semibold mb-4 text-indigo-600">Featured Courses</h2>
+              <ul class="space-y-2">
+                <li class="text-gray-700">Introduction to Programming</li>
+                <li class="text-gray-700">Web Development Fundamentals</li>
+                <li class="text-gray-700">Data Science Essentials</li>
+              </ul>
+            </div>
+            <div class="bg-white p-6 rounded-lg shadow-md">
+              <h2 class="text-xl font-semibold mb-4 text-green-600">Daily Quests</h2>
+              <ul class="space-y-2">
+                <li class="text-gray-700">Solve a Coding Challenge</li>
+                <li class="text-gray-700">Learn a New Concept</li>
+                <li class="text-gray-700">Practice Problem-Solving</li>
+              </ul>
+            </div>
+            <div class="bg-white p-6 rounded-lg shadow-md">
+              <h2 class="text-xl font-semibold mb-4 text-orange-600">Learning Resources</h2>
+              <ul class="space-y-2">
+                <li class="text-gray-700">Video Tutorials</li>
+                <li class="text-gray-700">Interactive Exercises</li>
+                <li class="text-gray-700">Community Forums</li>
+              </ul>
+            </div>
+          </div>
+        `;
+      }
     </script>
   </body>
 </html>
