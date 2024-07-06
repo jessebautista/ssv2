@@ -15,7 +15,11 @@ if (Astro.request.method === 'POST') {
     console.log('Attempting to sign up with:', { email, username, fullName });
     const result = await signUp(email, password, username, fullName);
     console.log('Signup result:', result);
-    return Astro.redirect('/');
+    if (result.user && result.profile) {
+      return Astro.redirect('/');
+    } else {
+      error = 'Failed to create user and profile';
+    }
   } catch (err) {
     console.error('Error during signup:', err);
     error = err.message;

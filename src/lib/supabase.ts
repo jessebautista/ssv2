@@ -25,28 +25,30 @@ export async function signUp(email: string, password: string, username: string, 
   console.log('Input data:', { email, username, fullName });
   await logError(`Input data: ${JSON.stringify({ email, username, fullName })}`);
 
-  const { data, error } = await supabase.auth.signUp({
+  // Step 1: Sign up the user
+  const { data: authData, error: authError } = await supabase.auth.signUp({
     email,
     password,
   });
 
-  console.log('Auth signUp result:', { data, error });
-  await logError(`Auth signUp result: ${JSON.stringify({ data, error })}`);
+  console.log('Auth signUp result:', { authData, authError });
+  await logError(`Auth signUp result: ${JSON.stringify({ authData, authError })}`);
 
-  if (error) {
-    console.error('Error in auth.signUp:', error);
-    await logError(`Error in auth.signUp: ${JSON.stringify(error)}`);
-    throw error;
+  if (authError) {
+    console.error('Error in auth.signUp:', authError);
+    await logError(`Error in auth.signUp: ${JSON.stringify(authError)}`);
+    throw authError;
   }
 
-  if (data.user) {
-    console.log('User created successfully:', data.user);
-    await logError(`User created successfully: ${JSON.stringify(data.user)}`);
+  if (authData.user) {
+    console.log('User created successfully:', authData.user);
+    await logError(`User created successfully: ${JSON.stringify(authData.user)}`);
     console.log('Attempting to insert profile');
     await logError('Attempting to insert profile');
 
+    // Step 2: Create the user profile
     const profileData = { 
-      id: data.user.id, 
+      id: authData.user.id, 
       username, 
       full_name: fullName,
     };
@@ -73,12 +75,13 @@ export async function signUp(email: string, password: string, username: string, 
 
     console.log('Profile inserted successfully:', insertedProfile);
     await logError(`Profile inserted successfully: ${JSON.stringify(insertedProfile)}`);
+
+    return { user: authData.user, profile: insertedProfile };
   } else {
     console.log('No user data returned from auth.signUp');
     await logError('No user data returned from auth.signUp');
+    throw new Error('Failed to create user');
   }
-
-  return data;
 }
 
 export async function signIn(email: string, password: string) {
