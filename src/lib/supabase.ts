@@ -5,9 +5,25 @@ const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYm
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
+async function logError(message: string) {
+  try {
+    await fetch('/api/log-error', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ message }),
+    });
+  } catch (error) {
+    console.error('Failed to log error:', error);
+  }
+}
+
 export async function signUp(email: string, password: string, username: string, fullName: string) {
   console.log('Starting signUp function');
+  await logError('Starting signUp function');
   console.log('Input data:', { email, username, fullName });
+  await logError(`Input data: ${JSON.stringify({ email, username, fullName })}`);
 
   const { data, error } = await supabase.auth.signUp({
     email,
@@ -15,23 +31,27 @@ export async function signUp(email: string, password: string, username: string, 
   });
 
   console.log('Auth signUp result:', { data, error });
+  await logError(`Auth signUp result: ${JSON.stringify({ data, error })}`);
 
   if (error) {
     console.error('Error in auth.signUp:', error);
+    await logError(`Error in auth.signUp: ${JSON.stringify(error)}`);
     throw error;
   }
 
   if (data.user) {
     console.log('User created successfully:', data.user);
+    await logError(`User created successfully: ${JSON.stringify(data.user)}`);
     console.log('Attempting to insert profile');
+    await logError('Attempting to insert profile');
 
     const profileData = { 
       id: data.user.id, 
       username, 
       full_name: fullName,
-      // We're not setting avatar_url or created_at as they have default values or are optional
     };
     console.log('Profile data to insert:', profileData);
+    await logError(`Profile data to insert: ${JSON.stringify(profileData)}`);
 
     const { data: insertedProfile, error: profileError } = await supabase
       .from('profiles')
@@ -44,12 +64,18 @@ export async function signUp(email: string, password: string, username: string, 
       console.error('Error details:', profileError.details);
       console.error('Error hint:', profileError.hint);
       console.error('Error message:', profileError.message);
+      await logError(`Error inserting profile: ${JSON.stringify(profileError)}`);
+      await logError(`Error details: ${profileError.details}`);
+      await logError(`Error hint: ${profileError.hint}`);
+      await logError(`Error message: ${profileError.message}`);
       throw profileError;
     }
 
     console.log('Profile inserted successfully:', insertedProfile);
+    await logError(`Profile inserted successfully: ${JSON.stringify(insertedProfile)}`);
   } else {
     console.log('No user data returned from auth.signUp');
+    await logError('No user data returned from auth.signUp');
   }
 
   return data;
@@ -62,6 +88,7 @@ export async function signIn(email: string, password: string) {
   });
 
   if (error) {
+    await logError(`Error in signIn: ${JSON.stringify(error)}`);
     throw error;
   }
 
@@ -71,6 +98,7 @@ export async function signIn(email: string, password: string) {
 export async function signOut() {
   const { error } = await supabase.auth.signOut();
   if (error) {
+    await logError(`Error in signOut: ${JSON.stringify(error)}`);
     throw error;
   }
 }
@@ -88,6 +116,7 @@ export async function getUserProfile(userId: string) {
     .single();
 
   if (error) {
+    await logError(`Error in getUserProfile: ${JSON.stringify(error)}`);
     throw error;
   }
 
@@ -101,6 +130,7 @@ export async function updateUserProfile(userId: string, updates: { username?: st
     .eq('id', userId);
 
   if (error) {
+    await logError(`Error in updateUserProfile: ${JSON.stringify(error)}`);
     throw error;
   }
 
