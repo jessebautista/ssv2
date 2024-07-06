@@ -1,9 +1,9 @@
-import { createClient } from '@supabase/supabase-js'
+import { createClient } from '@supabase/supabase-js';
 
-const supabaseUrl = 'https://oazeymuyzghnlmgbfvnc.supabase.co'
-const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9hemV5bXV5emdobmxtZ2Jmdm5jIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MTk4NDI4ODksImV4cCI6MjAzNTQxODg4OX0.50Av9W7k6GG6dEiyf9TKupwtE92mBEoCBH7Ps8Sw4rU'
+const supabaseUrl = 'https://oazeymuyzghnlmgbfvnc.supabase.co';
+const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9hemV5bXV5emdobmxtZ2Jmdm5jIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MTk4NDI4ODksImV4cCI6MjAzNTQxODg4OX0.50Av9W7k6GG6dEiyf9TKupwtE92mBEoCBH7Ps8Sw4rU';
 
-export const supabase = createClient(supabaseUrl, supabaseAnonKey)
+export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
 export async function signUp(email: string, password: string, username: string, fullName: string) {
   console.log('Starting signUp function');
@@ -35,7 +35,8 @@ export async function signUp(email: string, password: string, username: string, 
     const { data: insertedProfile, error: profileError } = await supabase
       .from('profiles')
       .insert(profileData)
-      .select();
+      .select()
+      .single(); // Ensure only a single row is returned
 
     if (profileError) {
       console.error('Error inserting profile:', profileError);
