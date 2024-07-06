@@ -7,6 +7,8 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey)
 
 export async function signUp(email: string, password: string, username: string, fullName: string) {
   console.log('Starting signUp function');
+  console.log('Input data:', { email, username, fullName });
+
   const { data, error } = await supabase.auth.signUp({
     email,
     password,
@@ -20,20 +22,30 @@ export async function signUp(email: string, password: string, username: string, 
   }
 
   if (data.user) {
-    console.log('User created, inserting profile');
-    const { error: profileError } = await supabase
+    console.log('User created successfully:', data.user);
+    console.log('Attempting to insert profile');
+
+    const profileData = { 
+      id: data.user.id, 
+      username, 
+      full_name: fullName,
+    };
+    console.log('Profile data to insert:', profileData);
+
+    const { data: insertedProfile, error: profileError } = await supabase
       .from('profiles')
-      .insert({ 
-        id: data.user.id, 
-        username, 
-        full_name: fullName,
-      });
+      .insert(profileData)
+      .select();
 
     if (profileError) {
       console.error('Error inserting profile:', profileError);
+      console.error('Error details:', profileError.details);
+      console.error('Error hint:', profileError.hint);
+      console.error('Error message:', profileError.message);
       throw profileError;
     }
-    console.log('Profile inserted successfully');
+
+    console.log('Profile inserted successfully:', insertedProfile);
   } else {
     console.log('No user data returned from auth.signUp');
   }
