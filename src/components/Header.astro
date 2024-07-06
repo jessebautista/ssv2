@@ -1,5 +1,6 @@
 ---
-// src/components/Header.astro
+import { supabase } from '../lib/supabase';
+const { user } = Astro.props;
 ---
 
 <header class="bg-blue-600 text-white p-4">
@@ -20,6 +21,17 @@
           </svg>
         </button>
       </li>
+      <li>
+        {user ? (
+          <button id="logoutBtn" class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded">
+            Logout
+          </button>
+        ) : (
+          <a href="/login" class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded">
+            Login
+          </a>
+        )}
+      </li>
     </ul>
   </nav>
 </header>
@@ -38,4 +50,16 @@
   settingsBtn.addEventListener('click', () => {
     document.dispatchEvent(new CustomEvent('openSettingsModal'));
   });
+
+  const logoutBtn = document.getElementById('logoutBtn');
+  if (logoutBtn) {
+    logoutBtn.addEventListener('click', async () => {
+      const { error } = await window.supabase.auth.signOut();
+      if (!error) {
+        window.location.reload();
+      } else {
+        console.error('Error signing out:', error);
+      }
+    });
+  }
 </script>
