@@ -29,6 +29,7 @@ export async function signUp(email: string, password: string, username: string, 
       id: data.user.id, 
       username, 
       full_name: fullName,
+      // We're not setting avatar_url or created_at as they have default values or are optional
     };
     console.log('Profile data to insert:', profileData);
 
@@ -36,7 +37,7 @@ export async function signUp(email: string, password: string, username: string, 
       .from('profiles')
       .insert(profileData)
       .select()
-      .single(); // Ensure only a single row is returned
+      .single();
 
     if (profileError) {
       console.error('Error inserting profile:', profileError);
