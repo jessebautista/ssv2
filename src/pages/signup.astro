@@ -22,7 +22,7 @@ if (Astro.request.method === 'POST') {
     }
   } catch (err) {
     console.error('Error during signup:', err);
-    error = err.message;
+    error = err.message || 'An unexpected error occurred';
   }
 }
 ---

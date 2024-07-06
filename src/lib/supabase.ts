@@ -7,13 +7,16 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
 async function logError(message: string) {
   try {
-    await fetch('/api/log-error', {
+    const response = await fetch('/api/log-error', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({ message }),
     });
+    if (!response.ok) {
+      console.error('Failed to log error:', await response.text());
+    }
   } catch (error) {
     console.error('Failed to log error:', error);
   }
@@ -25,62 +28,68 @@ export async function signUp(email: string, password: string, username: string, 
   console.log('Input data:', { email, username, fullName });
   await logError(`Input data: ${JSON.stringify({ email, username, fullName })}`);
 
-  // Step 1: Sign up the user
-  const { data: authData, error: authError } = await supabase.auth.signUp({
-    email,
-    password,
-  });
+  try {
+    // Step 1: Sign up the user
+    const { data: authData, error: authError } = await supabase.auth.signUp({
+      email,
+      password,
+    });
 
-  console.log('Auth signUp result:', { authData, authError });
-  await logError(`Auth signUp result: ${JSON.stringify({ authData, authError })}`);
+    console.log('Auth signUp result:', { authData, authError });
+    await logError(`Auth signUp result: ${JSON.stringify({ authData, authError })}`);
 
-  if (authError) {
-    console.error('Error in auth.signUp:', authError);
-    await logError(`Error in auth.signUp: ${JSON.stringify(authError)}`);
-    throw authError;
-  }
-
-  if (authData.user) {
-    console.log('User created successfully:', authData.user);
-    await logError(`User created successfully: ${JSON.stringify(authData.user)}`);
-    console.log('Attempting to insert profile');
-    await logError('Attempting to insert profile');
-
-    // Step 2: Create the user profile
-    const profileData = { 
-      id: authData.user.id, 
-      username, 
-      full_name: fullName,
-    };
-    console.log('Profile data to insert:', profileData);
-    await logError(`Profile data to insert: ${JSON.stringify(profileData)}`);
-
-    const { data: insertedProfile, error: profileError } = await supabase
-      .from('profiles')
-      .insert(profileData)
-      .select()
-      .single();
-
-    if (profileError) {
-      console.error('Error inserting profile:', profileError);
-      console.error('Error details:', profileError.details);
-      console.error('Error hint:', profileError.hint);
-      console.error('Error message:', profileError.message);
-      await logError(`Error inserting profile: ${JSON.stringify(profileError)}`);
-      await logError(`Error details: ${profileError.details}`);
-      await logError(`Error hint: ${profileError.hint}`);
-      await logError(`Error message: ${profileError.message}`);
-      throw profileError;
+    if (authError) {
+      console.error('Error in auth.signUp:', authError);
+      await logError(`Error in auth.signUp: ${JSON.stringify(authError)}`);
+      throw authError;
     }
 
-    console.log('Profile inserted successfully:', insertedProfile);
-    await logError(`Profile inserted successfully: ${JSON.stringify(insertedProfile)}`);
+    if (authData.user) {
+      console.log('User created successfully:', authData.user);
+      await logError(`User created successfully: ${JSON.stringify(authData.user)}`);
+      console.log('Attempting to insert profile');
+      await logError('Attempting to insert profile');
 
-    return { user: authData.user, profile: insertedProfile };
-  } else {
-    console.log('No user data returned from auth.signUp');
-    await logError('No user data returned from auth.signUp');
-    throw new Error('Failed to create user');
+      // Step 2: Create the user profile
+      const profileData = { 
+        id: authData.user.id, 
+        username, 
+        full_name: fullName,
+      };
+      console.log('Profile data to insert:', profileData);
+      await logError(`Profile data to insert: ${JSON.stringify(profileData)}`);
+
+      const { data: insertedProfile, error: profileError } = await supabase
+        .from('profiles')
+        .insert(profileData)
+        .select()
+        .single();
+
+      if (profileError) {
+        console.error('Error inserting profile:', profileError);
+        console.error('Error details:', profileError.details);
+        console.error('Error hint:', profileError.hint);
+        console.error('Error message:', profileError.message);
+        await logError(`Error inserting profile: ${JSON.stringify(profileError)}`);
+        await logError(`Error details: ${profileError.details}`);
+        await logError(`Error hint: ${profileError.hint}`);
+        await logError(`Error message: ${profileError.message}`);
+        throw profileError;
+      }
+
+      console.log('Profile inserted successfully:', insertedProfile);
+      await logError(`Profile inserted successfully: ${JSON.stringify(insertedProfile)}`);
+
+      return { user: authData.user, profile: insertedProfile };
+    } else {
+      console.log('No user data returned from auth.signUp');
+      await logError('No user data returned from auth.signUp');
+      throw new Error('Failed to create user');
+    }
+  } catch (error) {
+    console.error('Error during signup:', error);
+    await logError(`Error during signup: ${JSON.stringify(error)}`);
+    throw error;
   }
 }
 
