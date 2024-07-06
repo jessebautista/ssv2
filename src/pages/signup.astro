@@ -11,9 +11,12 @@ if (Astro.request.method === 'POST') {
   const username = formData.get('username') as string;
 
   try {
-    await signUp(email, password, username);
+    console.log('Attempting to sign up with:', { email, username });
+    const result = await signUp(email, password, username);
+    console.log('Signup result:', result);
     return Astro.redirect('/');
   } catch (err) {
+    console.error('Error during signup:', err);
     error = err.message;
   }
 }

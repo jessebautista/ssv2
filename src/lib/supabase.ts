@@ -6,23 +6,32 @@ const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYm
 export const supabase = createClient(supabaseUrl, supabaseAnonKey)
 
 export async function signUp(email: string, password: string, username: string) {
+  console.log('Starting signUp function');
   const { data, error } = await supabase.auth.signUp({
     email,
     password,
   });
 
+  console.log('Auth signUp result:', { data, error });
+
   if (error) {
+    console.error('Error in auth.signUp:', error);
     throw error;
   }
 
   if (data.user) {
+    console.log('User created, inserting profile');
     const { error: profileError } = await supabase
       .from('profiles')
       .insert({ user_id: data.user.id, username, progress: {} });
 
     if (profileError) {
+      console.error('Error inserting profile:', profileError);
       throw profileError;
     }
+    console.log('Profile inserted successfully');
+  } else {
+    console.log('No user data returned from auth.signUp');
   }
 
   return data;
