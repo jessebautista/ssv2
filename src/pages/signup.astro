@@ -9,10 +9,11 @@ if (Astro.request.method === 'POST') {
   const email = formData.get('email') as string;
   const password = formData.get('password') as string;
   const username = formData.get('username') as string;
+  const fullName = formData.get('fullName') as string;
 
   try {
-    console.log('Attempting to sign up with:', { email, username });
-    const result = await signUp(email, password, username);
+    console.log('Attempting to sign up with:', { email, username, fullName });
+    const result = await signUp(email, password, username, fullName);
     console.log('Signup result:', result);
     return Astro.redirect('/');
   } catch (err) {
@@ -34,6 +35,10 @@ if (Astro.request.method === 'POST') {
       <div>
         <label for="username" class="block text-sm font-medium text-gray-700">Username</label>
         <input type="text" id="username" name="username" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+      </div>
+      <div>
+        <label for="fullName" class="block text-sm font-medium text-gray-700">Full Name</label>
+        <input type="text" id="fullName" name="fullName" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
       </div>
       <div>
         <label for="password" class="block text-sm font-medium text-gray-700">Password</label>

@@ -5,7 +5,7 @@ const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYm
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey)
 
-export async function signUp(email: string, password: string, username: string) {
+export async function signUp(email: string, password: string, username: string, fullName: string) {
   console.log('Starting signUp function');
   const { data, error } = await supabase.auth.signUp({
     email,
@@ -23,7 +23,11 @@ export async function signUp(email: string, password: string, username: string) 
     console.log('User created, inserting profile');
     const { error: profileError } = await supabase
       .from('profiles')
-      .insert({ user_id: data.user.id, username, progress: {} });
+      .insert({ 
+        id: data.user.id, 
+        username, 
+        full_name: fullName,
+      });
 
     if (profileError) {
       console.error('Error inserting profile:', profileError);
@@ -66,8 +70,21 @@ export async function getUserProfile(userId: string) {
   const { data, error } = await supabase
     .from('profiles')
     .select('*')
-    .eq('user_id', userId)
+    .eq('id', userId)
     .single();
+
+  if (error) {
+    throw error;
+  }
+
+  return data;
+}
+
+export async function updateUserProfile(userId: string, updates: { username?: string, full_name?: string, avatar_url?: string }) {
+  const { data, error } = await supabase
+    .from('profiles')
+    .update(updates)
+    .eq('id', userId);
 
   if (error) {
     throw error;
