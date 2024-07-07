@@ -102,7 +102,7 @@ if (user) {
         <h2 class="text-2xl font-bold mb-4">Settings</h2>
         <div class="tab-container">
           <button class="tab active" onclick="openTab(event, 'generalSettings')">General</button>
-          <button class="tab {user ? '' : 'disabled'}" onclick="openTab(event, 'profileSettings')" id="profileTab">Profile</button>
+          <button class="tab" onclick="openTab(event, 'profileSettings')" id="profileTab" style="display: none;">Profile</button>
         </div>
         <div id="generalSettings" class="tab-content" style="display: block;">
           <div class="mb-4">
@@ -267,6 +267,27 @@ if (user) {
         document.getElementById(tabName).style.display = "block";
         evt.currentTarget.className += " active";
       }
+
+      // Function to update UI based on login status
+      function updateUIForLoginStatus(isLoggedIn) {
+        if (isLoggedIn) {
+          profileTab.style.display = 'inline-block';
+        } else {
+          profileTab.style.display = 'none';
+          // If the profile tab was active, switch to general settings
+          if (profileTab.classList.contains('active')) {
+            openTab({ currentTarget: document.querySelector('.tab[onclick="openTab(event, \'generalSettings\')"]') }, 'generalSettings');
+          }
+        }
+      }
+
+      // Check login status on page load
+      supabase.auth.onAuthStateChange((event, session) => {
+        updateUIForLoginStatus(!!session);
+      });
+
+      // Initial check
+      updateUIForLoginStatus(!!supabase.auth.session());
     </script>
   </body>
 </html>
