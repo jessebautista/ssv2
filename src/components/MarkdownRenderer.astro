@@ -8,6 +8,13 @@ interface Props {
 
 const { content } = Astro.props;
 
+// Configure marked to use GitHub Flavored Markdown
+marked.setOptions({
+  gfm: true,
+  breaks: true,
+  headerIds: false,
+});
+
 // Parse markdown to HTML
 const rawHtml = marked.parse(content);
 
