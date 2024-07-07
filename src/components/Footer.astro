@@ -34,11 +34,16 @@ import Toggle from '../templates/toggle.astro';
 </footer>
 
 <script>
-  const themeToggle = document.getElementById('themeToggle');
-
-  themeToggle.addEventListener('click', () => {
-    document.body.classList.toggle('dark');
-    localStorage.setItem('theme', document.body.classList.contains('dark') ? 'dark' : 'light');
+  const themeToggle = document.getElementById('hs-basic-usage');
+  
+  themeToggle.addEventListener('change', () => {
+    if (themeToggle.checked) {
+      document.documentElement.classList.add('dark');
+      localStorage.setItem('theme', 'dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+      localStorage.setItem('theme', 'light');
+    }
   });
 
   // Check for saved theme preference or prefer-color-scheme
@@ -46,6 +51,7 @@ import Toggle from '../templates/toggle.astro';
   const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
 
   if (savedTheme === 'dark' || (!savedTheme && prefersDark)) {
-    document.body.classList.add('dark');
+    document.documentElement.classList.add('dark');
+    themeToggle.checked = true;
   }
 </script>

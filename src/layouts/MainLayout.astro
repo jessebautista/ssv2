@@ -23,7 +23,6 @@ if (user) {
     <style>
       body {
         font-family: 'Roboto', sans-serif;
-        background-color: #f4f6f8;
       }
       .resizer {
         width: 6px;
@@ -36,7 +35,6 @@ if (user) {
         background-color: #bdbdbd;
       }
       .main-content {
-        background-color: #ffffff;
         border-radius: 8px;
         box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
       }
@@ -84,7 +82,7 @@ if (user) {
     <div class="flex flex-1 overflow-hidden">
       <Sidebar />
       <main class="flex-1 p-6 overflow-auto">
-        <div id="course-content" class="main-content p-8">
+        <div id="course-content" class="main-content p-8 bg-white dark:bg-gray-800 text-gray-900 dark:text-white">
           <slot />
         </div>
       </main>
@@ -159,7 +157,8 @@ if (user) {
         lastDownX = e.clientX;
       });
 
-      document.addEventListener('mousemove', (e) => {
+      document.addEventListener('mousemove',
+ (e) => {
         if (!isResizing) return;
 
         const offsetRight = document.body.offsetWidth - (e.clientX - document.body.offsetLeft);
@@ -264,6 +263,16 @@ if (user) {
         document.getElementById(tabName).style.display = "block";
         evt.currentTarget.className += " active";
       }
+
+      // Apply the theme on page load
+      document.addEventListener('DOMContentLoaded', () => {
+        const savedTheme = localStorage.getItem('theme');
+        const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+
+        if (savedTheme === 'dark' || (!savedTheme && prefersDark)) {
+          document.documentElement.classList.add('dark');
+        }
+      });
     </script>
   </body>
 </html>
