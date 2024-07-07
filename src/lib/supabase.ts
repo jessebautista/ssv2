@@ -35,16 +35,41 @@ export async function signUp(email: string, password: string, firstName: string,
       throw error;
     }
 
-    // If user is created successfully, create a profile
-    const { error: profileError } = await supabase
+    // Check if a profile already exists
+    const { data: existingProfile, error: fetchError } = await supabase
       .from('profiles')
-      .insert([
-        { id: user.user.id, email, first_name: firstName, last_name: lastName }
-      ]);
+      .select('*')
+      .eq('id', user.user.id)
+      .single();
 
-    if (profileError) {
-      await logError(`Error in profile creation: ${JSON.stringify(profileError)}`);
-      throw profileError;
+    if (fetchError && fetchError.code !== 'PGRST116') {
+      await logError(`Error fetching existing profile: ${JSON.stringify(fetchError)}`);
+      throw fetchError;
+    }
+
+    if (existingProfile) {
+      // Update existing profile
+      const { error: updateError } = await supabase
+        .from('profiles')
+        .update({ email, first_name: firstName, last_name: lastName })
+        .eq('id', user.user.id);
+
+      if (updateError) {
+        await logError(`Error updating profile: ${JSON.stringify(updateError)}`);
+        throw updateError;
+      }
+    } else {
+      // Insert new profile
+      const { error: insertError } = await supabase
+        .from('profiles')
+        .insert([
+          { id: user.user.id, email, first_name: firstName, last_name: lastName }
+        ]);
+
+      if (insertError) {
+        await logError(`Error in profile creation: ${JSON.stringify(insertError)}`);
+        throw insertError;
+      }
     }
 
     return user;
