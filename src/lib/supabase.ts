@@ -24,23 +24,33 @@ async function logError(message: string) {
 
 export async function signUp(email: string, password: string, firstName: string, lastName: string) {
   try {
-    const { data, error } = await supabase.auth.signUp({
+    const { data: authData, error: authError } = await supabase.auth.signUp({
       email,
       password,
-      options: {
-        data: {
-          first_name: firstName,
-          last_name: lastName,
-        },
-      },
     });
 
-    if (error) {
-      await logError(`Error in signUp: ${JSON.stringify(error)}`);
-      throw error;
+    if (authError) {
+      await logError(`Error in signUp: ${JSON.stringify(authError)}`);
+      throw authError;
     }
 
-    return data;
+    if (authData.user) {
+      const { error: profileError } = await supabase
+        .from('profiles')
+        .upsert({
+          id: authData.user.id,
+          first_name: firstName,
+          last_name: lastName,
+          email: email,
+        });
+
+      if (profileError) {
+        await logError(`Error creating profile: ${JSON.stringify(profileError)}`);
+        throw profileError;
+      }
+    }
+
+    return authData;
   } catch (error) {
     console.error('Error during signup:', error);
     await logError(`Error during signup: ${JSON.stringify(error)}`);
@@ -110,6 +120,60 @@ export async function getUserProfile(userId: string) {
   } catch (error) {
     console.error('Error getting user profile:', error);
     await logError(`Error getting user profile: ${JSON.stringify(error)}`);
+    throw error;
+  }
+}
+
+export async function updateUserProfile(userId: string, updates: { first_name?: string, last_name?: string, email?: string }) {
+  try {
+    const { data, error } = await supabase
+      .from('profiles')
+      .update(updates)
+      .eq('id', userId);
+
+    if (error) {
+      await logError(`Error in updateUserProfile: ${JSON.stringify(error)}`);
+      throw error;
+    }
+
+    return data;
+  } catch (error) {
+    console.error('Error updating user profile:', error);
+    await logError(`Error updating user profile: ${JSON.stringify(error)}`);
+    throw error;
+  }
+}
+
+export async function updateUserEmail(newEmail: string) {
+  try {
+    const { data, error } = await supabase.auth.updateUser({ email: newEmail });
+
+    if (error) {
+      await logError(`Error in updateUserEmail: ${JSON.stringify(error)}`);
+      throw error;
+    }
+
+    return data;
+  } catch (error) {
+    console.error('Error updating user email:', error);
+    await logError(`Error updating user email: ${JSON.stringify(error)}`);
+    throw error;
+  }
+}
+
+export async function updateUserPassword(newPassword: string) {
+  try {
+    const { data, error } = await supabase.auth.updateUser({ password: newPassword });
+
+    if (error) {
+      await logError(`Error in updateUserPassword: ${JSON.stringify(error)}`);
+      throw error;
+    }
+
+    return data;
+  } catch (error) {
+    console.error('Error updating user password:', error);
+    await logError(`Error updating user password: ${JSON.stringify(error)}`);
     throw error;
   }
 }
