@@ -251,7 +251,8 @@ if (user) {
         }
       };
 
-      function openTab(evt, tabName) {
+      // Move openTab function outside of the script tag to make it globally accessible
+      window.openTab = function(evt, tabName) {
         var i, tabContent, tabLinks;
         tabContent = document.getElementsByClassName("tab-content");
         for (i = 0; i < tabContent.length; i++) {
