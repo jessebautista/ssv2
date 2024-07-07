@@ -157,8 +157,7 @@ if (user) {
         lastDownX = e.clientX;
       });
 
-      document.addEventListener('mousemove',
- (e) => {
+      document.addEventListener('mousemove', (e) => {
         if (!isResizing) return;
 
         const offsetRight = document.body.offsetWidth - (e.clientX - document.body.offsetLeft);
@@ -263,16 +262,6 @@ if (user) {
         document.getElementById(tabName).style.display = "block";
         evt.currentTarget.className += " active";
       }
-
-      // Apply the theme on page load
-      document.addEventListener('DOMContentLoaded', () => {
-        const savedTheme = localStorage.getItem('theme');
-        const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-
-        if (savedTheme === 'dark' || (!savedTheme && prefersDark)) {
-          document.documentElement.classList.add('dark');
-        }
-      });
     </script>
   </body>
 </html>
