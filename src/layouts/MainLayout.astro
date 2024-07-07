@@ -98,7 +98,7 @@ if (user) {
         <h2 class="text-2xl font-bold mb-4">Settings</h2>
         <div class="tab-container">
           <button class="tab active" onclick="openTab(event, 'generalSettings')">General</button>
-          <button class="tab" onclick="openTab(event, 'accountSettings')" id="accountTab">Account</button>
+          <button class="tab" onclick="openTab(event, 'accountSettings')" id="accountTab" style="display: none;">Account</button>
         </div>
         <div id="generalSettings" class="tab-content" style="display: block;">
           <div class="mb-4">
@@ -274,7 +274,7 @@ if (user) {
         }
       }
 
-      // Check login status on page load
+      // Check login status on page load and when auth state changes
       supabase.auth.onAuthStateChange((event, session) => {
         updateUIForLoginStatus(!!session);
       });
