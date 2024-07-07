@@ -22,9 +22,10 @@ async function logError(message: string) {
   }
 }
 
-export async function signUp(email: string, password: string) {
+export async function signUp(email: string, password: string, firstName: string, lastName: string) {
   try {
-    const { data, error } = await supabase.auth.signUp({
+    // Sign up the user
+    const { data: user, error } = await supabase.auth.signUp({
       email,
       password,
     });
@@ -34,47 +35,22 @@ export async function signUp(email: string, password: string) {
       throw error;
     }
 
-    return data;
+    // If user is created successfully, create a profile
+    const { error: profileError } = await supabase
+      .from('profiles')
+      .insert([
+        { id: user.user.id, first_name: firstName, last_name: lastName }
+      ]);
+
+    if (profileError) {
+      await logError(`Error in profile creation: ${JSON.stringify(profileError)}`);
+      throw profileError;
+    }
+
+    return user;
   } catch (error) {
     console.error('Error during signup:', error);
     await logError(`Error during signup: ${JSON.stringify(error)}`);
     throw error;
   }
 }
-
-export async function signIn(email: string, password: string) {
-  try {
-    const { data, error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
-
-    if (error) {
-      await logError(`Error in signIn: ${JSON.stringify(error)}`);
-      throw error;
-    }
-
-    return data;
-  } catch (error) {
-    console.error('Error during sign in:', error);
-    await logError(`Error during sign in: ${JSON.stringify(error)}`);
-    throw error;
-  }
-}
-
-export async function signOut() {
-  const { error } = await supabase.auth.signOut();
-  if (error) {
-    await logError(`Error in signOut: ${JSON.stringify(error)}`);
-    throw error;
-  }
-}
-
-export async function getUser() {
-  const { data: { user } } = await supabase.auth.getUser();
-  return user;
-}
-
-// Remove or comment out the following functions as they are not needed for basic auth
-// export async function getUserProfile(userId: string) { ... }
-// export async function updateUserProfile(userId: string, updates: { username?: string, full_name?: string, avatar_url?: string }) { ... }
