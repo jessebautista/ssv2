@@ -61,10 +61,20 @@ const { user } = Astro.props;
   const logoutBtn = document.getElementById('logoutBtn');
   if (logoutBtn) {
     logoutBtn.addEventListener('click', async () => {
-      const { error } = await window.supabase.auth.signOut();
-      if (!error) {
-        window.location.reload();
-      } else {
+      try {
+        const response = await fetch('/api/auth/signout', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
+
+        if (response.ok) {
+          window.location.href = '/';
+        } else {
+          console.error('Error signing out:', await response.text());
+        }
+      } catch (error) {
         console.error('Error signing out:', error);
       }
     });
