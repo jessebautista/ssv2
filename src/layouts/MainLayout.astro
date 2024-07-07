@@ -192,8 +192,7 @@ if (user) {
 
         // Dispatch custom event with settings and account data
         document.dispatchEvent(new CustomEvent('saveSettings', {
-          detail: { st
-oreId, publicKey, accountData }
+          detail: { storeId, publicKey, accountData }
         }));
 
         settingsModal.style.display = 'none';
