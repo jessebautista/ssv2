@@ -242,14 +242,8 @@ if (user) {
       }
 
       // Make supabase available globally
-      window.supabase = {
-        auth: {
-          signOut: async () => {
-            const { error } = await fetch('/api/auth/signout', { method: 'POST' });
-            if (error) throw error;
-          }
-        }
-      };
+      import { supabase } from '../lib/supabase';
+      window.supabase = supabase;
 
       // Move openTab function outside of the script tag to make it globally accessible
       window.openTab = function(evt, tabName) {
