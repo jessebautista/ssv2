@@ -2,6 +2,7 @@
 import Header from '../components/Header.astro';
 import Sidebar from '../components/Sidebar.astro';
 import CodeInterpreter from '../components/CodeInterpreter.astro';
+import Footer from '../components/Footer.astro';
 import { getUser, getUserProfile } from '../lib/supabase';
 
 const { title } = Astro.props;
@@ -91,6 +92,8 @@ if (user) {
         <CodeInterpreter />
       </div>
     </div>
+
+    <Footer />
 
     <!-- Settings Modal -->
     <div id="settingsModal" class="modal">
@@ -189,7 +192,8 @@ if (user) {
 
         // Dispatch custom event with settings and account data
         document.dispatchEvent(new CustomEvent('saveSettings', {
-          detail: { storeId, publicKey, accountData }
+          detail: { st
+oreId, publicKey, accountData }
         }));
 
         settingsModal.style.display = 'none';
