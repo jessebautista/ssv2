@@ -24,10 +24,15 @@ async function logError(message: string) {
 
 export async function signUp(email: string, password: string, firstName: string, lastName: string) {
   try {
-    // Sign up the user
-    const { data: user, error } = await supabase.auth.signUp({
+    const { data, error } = await supabase.auth.signUp({
       email,
       password,
+      options: {
+        data: {
+          first_name: firstName,
+          last_name: lastName,
+        },
+      },
     });
 
     if (error) {
@@ -35,22 +40,76 @@ export async function signUp(email: string, password: string, firstName: string,
       throw error;
     }
 
-    // If user is created successfully, create a profile
-    const { error: profileError } = await supabase
-      .from('profiles')
-      .insert([
-        { id: user.user.id, first_name: firstName, last_name: lastName }
-      ]);
-
-    if (profileError) {
-      await logError(`Error in profile creation: ${JSON.stringify(profileError)}`);
-      throw profileError;
-    }
-
-    return user;
+    return data;
   } catch (error) {
     console.error('Error during signup:', error);
     await logError(`Error during signup: ${JSON.stringify(error)}`);
+    throw error;
+  }
+}
+
+export async function signIn(email: string, password: string) {
+  try {
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
+
+    if (error) {
+      await logError(`Error in signIn: ${JSON.stringify(error)}`);
+      throw error;
+    }
+
+    return data;
+  } catch (error) {
+    console.error('Error during sign in:', error);
+    await logError(`Error during sign in: ${JSON.stringify(error)}`);
+    throw error;
+  }
+}
+
+export async function signOut() {
+  try {
+    const { error } = await supabase.auth.signOut();
+    if (error) {
+      await logError(`Error in signOut: ${JSON.stringify(error)}`);
+      throw error;
+    }
+  } catch (error) {
+    console.error('Error during sign out:', error);
+    await logError(`Error during sign out: ${JSON.stringify(error)}`);
+    throw error;
+  }
+}
+
+export async function getUser() {
+  try {
+    const { data: { user } } = await supabase.auth.getUser();
+    return user;
+  } catch (error) {
+    console.error('Error getting user:', error);
+    await logError(`Error getting user: ${JSON.stringify(error)}`);
+    throw error;
+  }
+}
+
+export async function getUserProfile(userId: string) {
+  try {
+    const { data, error } = await supabase
+      .from('profiles')
+      .select('*')
+      .eq('id', userId)
+      .single();
+
+    if (error) {
+      await logError(`Error in getUserProfile: ${JSON.stringify(error)}`);
+      throw error;
+    }
+
+    return data;
+  } catch (error) {
+    console.error('Error getting user profile:', error);
+    await logError(`Error getting user profile: ${JSON.stringify(error)}`);
     throw error;
   }
 }
