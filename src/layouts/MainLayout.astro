@@ -75,6 +75,10 @@ if (user) {
         padding: 20px;
         border-top: none;
       }
+      .tab.disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
     </style>
   </head>
   <body class="flex flex-col min-h-screen bg-gray-100">
@@ -98,7 +102,7 @@ if (user) {
         <h2 class="text-2xl font-bold mb-4">Settings</h2>
         <div class="tab-container">
           <button class="tab active" onclick="openTab(event, 'generalSettings')">General</button>
-          <button class="tab" onclick="openTab(event, 'profileSettings')">Profile</button>
+          <button class="tab {user ? '' : 'disabled'}" onclick="openTab(event, 'profileSettings')" id="profileTab">Profile</button>
         </div>
         <div id="generalSettings" class="tab-content" style="display: block;">
           <div class="mb-4">
@@ -145,6 +149,7 @@ if (user) {
       const publicKeyInput = document.getElementById('publicKey');
       const courseContent = document.getElementById('course-content');
       const profileForm = document.getElementById('profileForm');
+      const profileTab = document.getElementById('profileTab');
 
       let isResizing = false;
       let lastDownX = 0;
@@ -247,6 +252,9 @@ if (user) {
 
       // Move openTab function outside of the script tag to make it globally accessible
       window.openTab = function(evt, tabName) {
+        if (evt.currentTarget.classList.contains('disabled')) {
+          return;
+        }
         var i, tabContent, tabLinks;
         tabContent = document.getElementsByClassName("tab-content");
         for (i = 0; i < tabContent.length; i++) {
