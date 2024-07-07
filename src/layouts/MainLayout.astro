@@ -76,10 +76,20 @@ if (user) {
         padding: 20px;
         border-top: none;
       }
+      .theme-toggle {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        z-index: 1001;
+      }
     </style>
   </head>
-  <body class="flex flex-col min-h-screen bg-gray-100">
+  <body class="flex flex-col min-h-screen bg-gray-100 dark:bg-gray-900 transition-colors duration-200">
     <Header user={user} />
+    <div class="mt-8"></div> <!-- Added space below header -->
+    <button id="themeToggle" class="theme-toggle bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-white px-4 py-2 rounded-full shadow-md hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors duration-200">
+      Toggle Theme
+    </button>
     <div class="flex flex-1 overflow-hidden">
       <Sidebar />
       <main class="flex-1 p-6 overflow-auto">
@@ -149,6 +159,7 @@ if (user) {
       const courseContent = document.getElementById('course-content');
       const accountForm = document.getElementById('accountForm');
       const accountTab = document.getElementById('accountTab');
+      const themeToggle = document.getElementById('themeToggle');
 
       let isResizing = false;
       let lastDownX = 0;
@@ -214,31 +225,31 @@ if (user) {
 
       function resetMainContent() {
         courseContent.innerHTML = `
-          <h1 class="text-3xl font-bold mb-6 text-gray-800">Welcome to Swell Surge</h1>
-          <p class="text-lg text-gray-600 mb-8">Select a course or daily quest from the sidebar to start your learning journey!</p>
+          <h1 class="text-3xl font-bold mb-6 text-gray-800 dark:text-gray-200">Welcome to Swell Surge</h1>
+          <p class="text-lg text-gray-600 dark:text-gray-400 mb-8">Select a course or daily quest from the sidebar to start your learning journey!</p>
           <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <div class="bg-white p-6 rounded-lg shadow-md">
-              <h2 class="text-xl font-semibold mb-4 text-indigo-600">Featured Courses</h2>
+            <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
+              <h2 class="text-xl font-semibold mb-4 text-indigo-600 dark:text-indigo-400">Featured Courses</h2>
               <ul class="space-y-2">
-                <li class="text-gray-700">Introduction to Programming</li>
-                <li class="text-gray-700">Web Development Fundamentals</li>
-                <li class="text-gray-700">Data Science Essentials</li>
+                <li class="text-gray-700 dark:text-gray-300">Introduction to Programming</li>
+                <li class="text-gray-700 dark:text-gray-300">Web Development Fundamentals</li>
+                <li class="text-gray-700 dark:text-gray-300">Data Science Essentials</li>
               </ul>
             </div>
-            <div class="bg-white p-6 rounded-lg shadow-md">
-              <h2 class="text-xl font-semibold mb-4 text-green-600">Daily Quests</h2>
+            <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
+              <h2 class="text-xl font-semibold mb-4 text-green-600 dark:text-green-400">Daily Quests</h2>
               <ul class="space-y-2">
-                <li class="text-gray-700">Solve a Coding Challenge</li>
-                <li class="text-gray-700">Learn a New Concept</li>
-                <li class="text-gray-700">Practice Problem-Solving</li>
+                <li class="text-gray-700 dark:text-gray-300">Solve a Coding Challenge</li>
+                <li class="text-gray-700 dark:text-gray-300">Learn a New Concept</li>
+                <li class="text-gray-700 dark:text-gray-300">Practice Problem-Solving</li>
               </ul>
             </div>
-            <div class="bg-white p-6 rounded-lg shadow-md">
-              <h2 class="text-xl font-semibold mb-4 text-orange-600">Learning Resources</h2>
+            <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
+              <h2 class="text-xl font-semibold mb-4 text-orange-600 dark:text-orange-400">Learning Resources</h2>
               <ul class="space-y-2">
-                <li class="text-gray-700">Video Tutorials</li>
-                <li class="text-gray-700">Interactive Exercises</li>
-                <li class="text-gray-700">Community Forums</li>
+                <li class="text-gray-700 dark:text-gray-300">Video Tutorials</li>
+                <li class="text-gray-700 dark:text-gray-300">Interactive Exercises</li>
+                <li class="text-gray-700 dark:text-gray-300">Community Forums</li>
               </ul>
             </div>
           </div>
@@ -264,7 +275,19 @@ if (user) {
         evt.currentTarget.className += " active";
       }
 
-      // Remove the updateUIForLoginStatus function and its related code
+      // Theme toggle functionality
+      themeToggle.addEventListener('click', () => {
+        document.body.classList.toggle('dark');
+        localStorage.setItem('theme', document.body.classList.contains('dark') ? 'dark' : 'light');
+      });
+
+      // Check for saved theme preference or prefer-color-scheme
+      const savedTheme = localStorage.getItem('theme');
+      const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+
+      if (savedTheme === 'dark' || (!savedTheme && prefersDark)) {
+        document.body.classList.add('dark');
+      }
     </script>
   </body>
 </html>
