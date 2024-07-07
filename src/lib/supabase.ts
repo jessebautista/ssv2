@@ -24,33 +24,30 @@ async function logError(message: string) {
 
 export async function signUp(email: string, password: string, firstName: string, lastName: string) {
   try {
-    const { data: authData, error: authError } = await supabase.auth.signUp({
+    // Sign up the user
+    const { data: user, error } = await supabase.auth.signUp({
       email,
       password,
     });
 
-    if (authError) {
-      await logError(`Error in signUp: ${JSON.stringify(authError)}`);
-      throw authError;
+    if (error) {
+      await logError(`Error in signUp: ${JSON.stringify(error)}`);
+      throw error;
     }
 
-    if (authData.user) {
-      const { error: profileError } = await supabase
-        .from('profiles')
-        .upsert({
-          id: authData.user.id,
-          first_name: firstName,
-          last_name: lastName,
-          email: email,
-        });
+    // If user is created successfully, create a profile
+    const { error: profileError } = await supabase
+      .from('profiles')
+      .insert([
+        { id: user.user.id, email, first_name: firstName, last_name: lastName }
+      ]);
 
-      if (profileError) {
-        await logError(`Error creating profile: ${JSON.stringify(profileError)}`);
-        throw profileError;
-      }
+    if (profileError) {
+      await logError(`Error in profile creation: ${JSON.stringify(profileError)}`);
+      throw profileError;
     }
 
-    return authData;
+    return user;
   } catch (error) {
     console.error('Error during signup:', error);
     await logError(`Error during signup: ${JSON.stringify(error)}`);
