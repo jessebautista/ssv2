@@ -75,10 +75,6 @@ if (user) {
         padding: 20px;
         border-top: none;
       }
-      .tab.disabled {
-        opacity: 0.5;
-        cursor: not-allowed;
-      }
     </style>
   </head>
   <body class="flex flex-col min-h-screen bg-gray-100">
@@ -102,7 +98,7 @@ if (user) {
         <h2 class="text-2xl font-bold mb-4">Settings</h2>
         <div class="tab-container">
           <button class="tab active" onclick="openTab(event, 'generalSettings')">General</button>
-          <button class="tab" onclick="openTab(event, 'profileSettings')" id="profileTab" style="display: none;">Profile</button>
+          <button class="tab" onclick="openTab(event, 'accountSettings')" id="accountTab">Account</button>
         </div>
         <div id="generalSettings" class="tab-content" style="display: block;">
           <div class="mb-4">
@@ -114,8 +110,8 @@ if (user) {
             <input type="text" id="publicKey" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
           </div>
         </div>
-        <div id="profileSettings" class="tab-content">
-          <form id="profileForm" class="space-y-4">
+        <div id="accountSettings" class="tab-content">
+          <form id="accountForm" class="space-y-4">
             <div>
               <label for="email" class="block text-sm font-medium text-gray-700">Email</label>
               <input type="email" id="email" name="email" value={user?.email} required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
@@ -148,8 +144,8 @@ if (user) {
       const storeIdInput = document.getElementById('storeId');
       const publicKeyInput = document.getElementById('publicKey');
       const courseContent = document.getElementById('course-content');
-      const profileForm = document.getElementById('profileForm');
-      const profileTab = document.getElementById('profileTab');
+      const accountForm = document.getElementById('accountForm');
+      const accountTab = document.getElementById('accountTab');
 
       let isResizing = false;
       let lastDownX = 0;
@@ -187,13 +183,13 @@ if (user) {
         const storeId = storeIdInput.value;
         const publicKey = publicKeyInput.value;
         
-        // Get profile form data
-        const formData = new FormData(profileForm);
-        const profileData = Object.fromEntries(formData.entries());
+        // Get account form data
+        const formData = new FormData(accountForm);
+        const accountData = Object.fromEntries(formData.entries());
 
-        // Dispatch custom event with settings and profile data
+        // Dispatch custom event with settings and account data
         document.dispatchEvent(new CustomEvent('saveSettings', {
-          detail: { storeId, publicKey, profileData }
+          detail: { storeId, publicKey, accountData }
         }));
 
         settingsModal.style.display = 'none';
@@ -252,9 +248,6 @@ if (user) {
 
       // Move openTab function outside of the script tag to make it globally accessible
       window.openTab = function(evt, tabName) {
-        if (evt.currentTarget.classList.contains('disabled')) {
-          return;
-        }
         var i, tabContent, tabLinks;
         tabContent = document.getElementsByClassName("tab-content");
         for (i = 0; i < tabContent.length; i++) {
@@ -271,11 +264,11 @@ if (user) {
       // Function to update UI based on login status
       function updateUIForLoginStatus(isLoggedIn) {
         if (isLoggedIn) {
-          profileTab.style.display = 'inline-block';
+          accountTab.style.display = 'inline-block';
         } else {
-          profileTab.style.display = 'none';
-          // If the profile tab was active, switch to general settings
-          if (profileTab.classList.contains('active')) {
+          accountTab.style.display = 'none';
+          // If the account tab was active, switch to general settings
+          if (accountTab.classList.contains('active')) {
             openTab({ currentTarget: document.querySelector('.tab[onclick="openTab(event, \'generalSettings\')"]') }, 'generalSettings');
           }
         }

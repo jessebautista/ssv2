@@ -22,13 +22,6 @@ const { user } = Astro.props;
         </button>
       </li>
       <li>
-        {user && (
-          <a href="/profile" class="text-white hover:text-gray-200">
-            Profile
-          </a>
-        )}
-      </li>
-      <li>
         {user ? (
           <button id="logoutBtn" class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded">
             Logout
