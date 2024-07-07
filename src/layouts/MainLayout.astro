@@ -98,7 +98,7 @@ if (user) {
         <h2 class="text-2xl font-bold mb-4">Settings</h2>
         <div class="tab-container">
           <button class="tab active" onclick="openTab(event, 'generalSettings')">General</button>
-          <button class="tab" onclick="openTab(event, 'accountSettings')" id="accountTab" style="display: none;">Account</button>
+          <button class="tab" onclick="openTab(event, 'accountSettings')" id="accountTab">Account</button>
         </div>
         <div id="generalSettings" class="tab-content" style="display: block;">
           <div class="mb-4">
@@ -261,26 +261,7 @@ if (user) {
         evt.currentTarget.className += " active";
       }
 
-      // Function to update UI based on login status
-      function updateUIForLoginStatus(isLoggedIn) {
-        if (isLoggedIn) {
-          accountTab.style.display = 'inline-block';
-        } else {
-          accountTab.style.display = 'none';
-          // If the account tab was active, switch to general settings
-          if (accountTab.classList.contains('active')) {
-            openTab({ currentTarget: document.querySelector('.tab[onclick="openTab(event, \'generalSettings\')"]') }, 'generalSettings');
-          }
-        }
-      }
-
-      // Check login status on page load and when auth state changes
-      supabase.auth.onAuthStateChange((event, session) => {
-        updateUIForLoginStatus(!!session);
-      });
-
-      // Initial check
-      updateUIForLoginStatus(!!supabase.auth.session());
+      // Remove the updateUIForLoginStatus function and its related code
     </script>
   </body>
 </html>
