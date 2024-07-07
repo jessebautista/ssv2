@@ -76,20 +76,11 @@ if (user) {
         padding: 20px;
         border-top: none;
       }
-      .theme-toggle {
-        position: fixed;
-        top: 20px;
-        right: 20px;
-        z-index: 1001;
-      }
     </style>
   </head>
   <body class="flex flex-col min-h-screen bg-gray-100 dark:bg-gray-900 transition-colors duration-200">
     <Header user={user} />
     <div class="mt-8"></div> <!-- Added space below header -->
-    <button id="themeToggle" class="theme-toggle bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-white px-4 py-2 rounded-full shadow-md hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors duration-200">
-      Toggle Theme
-    </button>
     <div class="flex flex-1 overflow-hidden">
       <Sidebar />
       <main class="flex-1 p-6 overflow-auto">
@@ -159,7 +150,6 @@ if (user) {
       const courseContent = document.getElementById('course-content');
       const accountForm = document.getElementById('accountForm');
       const accountTab = document.getElementById('accountTab');
-      const themeToggle = document.getElementById('themeToggle');
 
       let isResizing = false;
       let lastDownX = 0;
@@ -273,20 +263,6 @@ if (user) {
         }
         document.getElementById(tabName).style.display = "block";
         evt.currentTarget.className += " active";
-      }
-
-      // Theme toggle functionality
-      themeToggle.addEventListener('click', () => {
-        document.body.classList.toggle('dark');
-        localStorage.setItem('theme', document.body.classList.contains('dark') ? 'dark' : 'light');
-      });
-
-      // Check for saved theme preference or prefer-color-scheme
-      const savedTheme = localStorage.getItem('theme');
-      const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-
-      if (savedTheme === 'dark' || (!savedTheme && prefersDark)) {
-        document.body.classList.add('dark');
       }
     </script>
   </body>
