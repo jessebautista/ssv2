@@ -7,7 +7,7 @@ export default defineConfig({
   output: 'server',
   adapter: vercel({
     functionPerRoute: false,
-    runtime: 'nodejs18.x', // Specify the Node.js version
+    runtime: 'nodejs18.x', // This matches your Vercel setting
   }),
   vite: {
     ssr: {
