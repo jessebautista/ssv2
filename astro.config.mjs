@@ -5,7 +5,12 @@ import vercel from '@astrojs/vercel/serverless';
 
 export default defineConfig({
   output: 'server',
-  adapter: vercel(),
+  adapter: vercel({
+    adapter: vercel({
+      functionPerRoute: false,
+      runtime: 'nodejs18.x', // Specify the Node.js version
+    }),
+  }),
   vite: {
     ssr: {
       noExternal: ['@supabase/supabase-js', 'swell-js'],
