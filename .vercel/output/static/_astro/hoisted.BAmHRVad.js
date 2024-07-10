@@ -1,0 +1,1 @@
+import"./hoisted.Cllz_4Nu.js";import"./hoisted.C8XSD0GW.js";document.addEventListener("DOMContentLoaded",()=>{new URLSearchParams(window.location.search).get("openSettings")==="true"&&(document.dispatchEvent(new CustomEvent("openSettingsModal")),window.history.replaceState({},document.title,window.location.pathname))});
