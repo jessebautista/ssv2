@@ -1,0 +1,13 @@
+{
+    "framework": "astro",
+    "buildCommand": "npm run build",
+    "devCommand": "npm run dev",
+    "installCommand": "npm install",
+    "outputDirectory": "dist",
+    "routes": [
+      {
+        "src": "/(.*)",
+        "dest": "/api/entry.js"
+      }
+    ]
+  }
