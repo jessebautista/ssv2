@@ -6,10 +6,8 @@ import vercel from '@astrojs/vercel/serverless';
 export default defineConfig({
   output: 'server',
   adapter: vercel({
-    adapter: vercel({
-      functionPerRoute: false,
-      runtime: 'nodejs18.x', // Specify the Node.js version
-    }),
+    functionPerRoute: false,
+    runtime: 'nodejs18.x', // Specify the Node.js version
   }),
   vite: {
     ssr: {
