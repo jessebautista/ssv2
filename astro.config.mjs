@@ -20,4 +20,5 @@ export default defineConfig({
   content: {
     sources: ['./content']
   },
+  adapter: vercel(),
 });
