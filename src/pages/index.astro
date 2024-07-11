@@ -27,6 +27,8 @@ const content = courseContent?.content || 'No content available.';
   </div>
 
   <script>
+    import { supabase } from '../lib/supabase';
+
     document.addEventListener('DOMContentLoaded', () => {
       const urlParams = new URLSearchParams(window.location.search);
       if (urlParams.get('openSettings') === 'true') {
@@ -34,6 +36,53 @@ const content = courseContent?.content || 'No content available.';
         // Remove the query parameter from the URL
         window.history.replaceState({}, document.title, window.location.pathname);
       }
+
+      // Add event listener for the Run Query button
+      const runQueryButton = document.querySelector('#run-query-button');
+      if (runQueryButton) {
+        runQueryButton.addEventListener('click', async () => {
+          const queryInput = document.querySelector('#query-input');
+          if (queryInput) {
+            const query = queryInput.value;
+            try {
+              const { data, error } = await supabase.rpc('run_query', { query_string: query });
+              if (error) throw error;
+              
+              const resultArea = document.querySelector('#query-result');
+              if (resultArea) {
+                resultArea.textContent = JSON.stringify(data, null, 2);
+              }
+            } catch (error) {
+              console.error('Error running query:', error);
+              alert('Error running query. Please check the console for details.');
+            }
+          }
+        });
+      }
+
+      // Fetch course content if it's not already loaded
+      const contentDiv = document.querySelector('.markdown-content');
+      if (contentDiv && contentDiv.innerHTML.trim() === 'No content available.') {
+        fetchCourseContent();
+      }
     });
+
+    async function fetchCourseContent() {
+      try {
+        const { data: courseContent, error } = await supabase
+          .from('courses')
+          .select('content')
+          .single();
+
+        if (error) throw error;
+
+        const contentDiv = document.querySelector('.markdown-content');
+        if (contentDiv && courseContent) {
+          contentDiv.innerHTML = marked.parse(courseContent.content);
+        }
+      } catch (error) {
+        console.error('Error fetching course content:', error);
+      }
+    }
   </script>
 </MainLayout>
