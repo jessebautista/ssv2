@@ -21,7 +21,4 @@ export default defineConfig({
       wrap: true,
     },
   },
-  content: {
-    sources: ['./content']
-  },
 });
