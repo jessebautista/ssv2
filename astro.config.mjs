@@ -13,6 +13,11 @@ export default defineConfig({
     ssr: {
       noExternal: ['@supabase/supabase-js', 'swell-js'],
     },
+    build: {
+      rollupOptions: {
+        external: ['swell-js'],
+      },
+    },
   },
   integrations: [tailwind(), mdx()],
   markdown: {
