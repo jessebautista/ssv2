@@ -15,11 +15,8 @@ marked.setOptions({
   headerIds: false,
 });
 
-// Decode HTML entities if present
-const decodedContent = content.replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&');
-
 // Parse markdown to HTML
-const rawHtml = marked.parse(decodedContent);
+const rawHtml = marked.parse(content);
 
 // Sanitize HTML
 const sanitizedHtml = DOMPurify.sanitize(rawHtml);
